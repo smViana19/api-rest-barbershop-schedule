@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "esModuleInterop": true,
@@ -11,7 +12,8 @@
     "strictNullChecks": true,
     "strict": true,
     "strictFunctionTypes": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "experimentalDecorators": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
