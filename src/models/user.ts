@@ -3,7 +3,7 @@ import { AllowNull, AutoIncrement, Column, DataType, Default, Model, PrimaryKey,
 
 @Table({
   tableName: 'users',
-  timestamps: true,
+  timestamps: false,
   underscored: false,
 })
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -13,21 +13,21 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
   @Column(DataType.INTEGER)
   declare id: CreationOptional<number>;
 
-  @Column(DataType.STRING)
   @AllowNull(false)
+  @Column(DataType.STRING)
   declare name: string;
 
-  @Column(DataType.STRING)
   @AllowNull(false)
+  @Column(DataType.STRING)
   declare email: string;
 
-  @Column(DataType.STRING)
   @AllowNull(false)
+  @Column(DataType.STRING)
   declare password: string;
 
-  @Column(DataType.ENUM('ADMIN', 'GUEST'))
   @Default('GUEST')
   @AllowNull(false)
+  @Column(DataType.ENUM('ADMIN', 'GUEST'))
   declare role: string
 
 
