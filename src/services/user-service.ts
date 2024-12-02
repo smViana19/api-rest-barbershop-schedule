@@ -2,14 +2,14 @@ import bcrypt from 'bcryptjs';
 import { ModelStatic } from "sequelize";
 import IUser from "../interfaces/IUser";
 import User from "../models/user";
-import { successResponse } from "../utils/response-utils";
+import { errorResponse, successResponse } from "../utils/response-utils";
 export default class UserService {
-  private model: ModelStatic<User> = User;
+  private user: ModelStatic<User> = User;
 
   public async createUser(user: IUser) {
     try {
       const hashedPassword = await bcrypt.hash(user.password, 10);
-      const createdUser = await this.model.create({
+      const createdUser = await this.user.create({
         name: user.name,
         email: user.email,
         password: hashedPassword,
@@ -24,7 +24,7 @@ export default class UserService {
 
   public async getAllUsers() {
     try {
-      const users = await this.model.findAll({
+      const users = await this.user.findAll({
         attributes: ['id', 'name', 'email', 'role']
       });
       return successResponse(200, users);
@@ -33,27 +33,41 @@ export default class UserService {
     }
   }
 
-  public async updateUser() {
+  public async updateUser(userId: string, userData: IUser) {
     try {
-
+      if (!userId) {
+        return errorResponse(404, "Usuário não encontrado");
+      }
+      const user = await this.user.findByPk(userId);
+      if (!user) return errorResponse(404, "Usuário não encontrado");
+      const { password, ...updatedData } = userData;
+      const userUpdated = await user.update(updatedData);
+      return successResponse(200, userUpdated);
     } catch (error) {
-
+      throw new Error("Erro ao editar usuario");
     }
   }
 
-  public async getUserById() {
+  public async getUserById(userId: string) {
     try {
-
+      const user = await this.user.findByPk(userId, {
+        attributes: ['id', 'name', 'email', 'role']
+      });
+      if (!user) return errorResponse(400, "Usuário não encontrado");
+      return successResponse(200, user);
     } catch (error) {
-
+      throw new Error("Erro ao mostrar usuario");
     }
   }
 
-  public async deleteUser() {
+  public async deleteUser(userId: string) {
     try {
-
+      const user = await this.user.findByPk(userId);
+      if (!user) return errorResponse(404, "Usuário não encontrado");
+      await user.destroy();
+      return successResponse(203);
     } catch (error) {
-
+      throw new Error("Erro ao deletar usuário");
     }
   }
 }
