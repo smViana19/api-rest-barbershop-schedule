@@ -53,7 +53,7 @@ export default class UserService {
       const user = await this.user.findByPk(userId, {
         attributes: ['id', 'name', 'email', 'role']
       });
-      if (!user) return errorResponse(400, "Usuário não encontrado");
+      if (!user) return errorResponse(404, "Usuário não encontrado");
       return successResponse(200, user);
     } catch (error) {
       throw new Error("Erro ao mostrar usuario");
