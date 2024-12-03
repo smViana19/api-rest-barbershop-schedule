@@ -45,5 +45,5 @@ export default class Service extends Model<
   declare price: number;
 
   @BelongsTo(() => Specialty)
-  declare speciality: Specialty[];
+  declare speciality?: Specialty[];
 }
