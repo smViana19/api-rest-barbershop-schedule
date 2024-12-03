@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import AuthService from "../services/auth-service";
+import { NextFunction, Request, Response } from 'express';
+import AuthService from '../services/auth-service';
 
 export default class AuthController {
-  private authService = new AuthService()
+  private authService = new AuthService();
 
   public async login(req: Request, res: Response, next: NextFunction) {
     try {

@@ -9,21 +9,19 @@ import {
   Column,
   DataType,
   Default,
-  HasMany,
+  ForeignKey,
   Model,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import Appointment from './appointment';
-
 @Table({
-  tableName: 'users',
+  tableName: 'specialties',
   timestamps: false,
   underscored: false,
 })
-export default class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+export default class Specialty extends Model<
+  InferAttributes<Specialty>,
+  InferCreationAttributes<Specialty>
 > {
   @PrimaryKey
   @AutoIncrement
@@ -35,19 +33,8 @@ export default class User extends Model<
   @Column(DataType.STRING)
   declare name: string;
 
+  @Default('')
   @AllowNull(false)
   @Column(DataType.STRING)
-  declare email: string;
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  declare password: string;
-
-  @Default('GUEST')
-  @AllowNull(false)
-  @Column(DataType.ENUM('ADMIN', 'GUEST'))
-  declare role: string;
-
-  @HasMany(() => Appointment)
-  declare appointment?: Appointment[];
+  declare description: string;
 }

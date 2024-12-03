@@ -1,15 +1,19 @@
-import { NextFunction, Request, Response } from "express";
-import UserService from "../services/user-service";
+import { NextFunction, Request, Response } from 'express';
+import UserService from '../services/user-service';
 
 export default class UserController {
-
   private userService = new UserService();
 
   public async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, email, password, role } = req.body;
-      const response = await this.userService.createUser({ name, email, password, role });
-      res.status(response.status).json(response.message)
+      const response = await this.userService.createUser({
+        name,
+        email,
+        password,
+        role,
+      });
+      res.status(response.status).json(response.message);
     } catch (error) {
       next(error);
     }
@@ -17,10 +21,10 @@ export default class UserController {
 
   public async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const { status, message } = await this.userService.getAllUsers()
-      res.status(status).json(message)
+      const { status, message } = await this.userService.getAllUsers();
+      res.status(status).json(message);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
@@ -41,18 +45,17 @@ export default class UserController {
       const user = await this.userService.updateUser(userId, { ...req.body });
       res.status(user.status).json(user.message);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
   public async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      const user = await this.userService.deleteUser(userId)
+      const user = await this.userService.deleteUser(userId);
       res.status(user.status).json(user.message);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
-
 }
