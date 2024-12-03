@@ -25,8 +25,7 @@ export default class ProfessionalController {
     next: NextFunction
   ) {
     try {
-      const { status, message } =
-        await this.professionalService.getAllProfessionals();
+      const { status, message } = await this.professionalService.getAllProfessionals();
       res.status(status).json(message);
     } catch (error) {
       next(error);
