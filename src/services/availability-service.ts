@@ -2,10 +2,14 @@ import { ModelStatic } from "sequelize";
 import Availability from "../models/availability";
 import IAvailability from "../interfaces/IAvailability";
 import { errorResponse, successResponse } from "../utils/response-utils";
+import Professional from "../models/professional";
 export default class AvailabilityService {
   private availability: ModelStatic<Availability> = Availability;
+  private professional: ModelStatic<Professional> = Professional;
   public async createAvailability(availability: IAvailability) {
     try {
+      const professional = await this.professional.findByPk(availability.professionalId);
+      if (!professional) return errorResponse(404, "Profissional não encontrado")
       const createAvailability = await this.availability.create({ ...availability })
       return successResponse(201, "Horario disponivel criado com sucesso", createAvailability)
     } catch (error) {

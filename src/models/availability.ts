@@ -19,7 +19,7 @@ import Professional from './professional';
 
 @Table({
   tableName: 'availability',
-  underscored: false,
+  underscored: true,
   timestamps: false,
 })
 export default class Availability extends Model<
