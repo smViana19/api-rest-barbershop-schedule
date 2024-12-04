@@ -3,6 +3,8 @@ import Availability from "../models/availability";
 import IAvailability from "../interfaces/IAvailability";
 import { errorResponse, successResponse } from "../utils/response-utils";
 import Professional from "../models/professional";
+import User from "../models/user";
+import AppError from "../utils/error-util";
 export default class AvailabilityService {
   private availability: ModelStatic<Availability> = Availability;
   private professional: ModelStatic<Professional> = Professional;
@@ -40,9 +42,41 @@ export default class AvailabilityService {
   }
   public async getAvailabilityByProfesionalId(professionalId: string) {
     try {
+      const professional = await this.professional.findByPk(professionalId);
+      if (!professional) return errorResponse(404, "Profissional não encontrado")
+      const availabilities = await this.availability.findAll({
+        where: {
+          professionalId,
+          isAvailable: true,
+        },
+        attributes: ['date', 'time']
+      })
+      if (availabilities.length === 0) {
+        return errorResponse(404, "Não há horários disponiveis");
+      }
+      //QUERY INTEIRA PARA CASO PRECISE FUTURAMENTE
+      // const availabilities = await this.availability.findAll({
+      //   where: {
+      //     professionalId,
+      //     isAvailable: true
+      //   },
+      //   include: [
+      //     {
+      //       model: Professional,
+      //       attributes: ['userId', 'specialtyId'],
+      //       include: [
+      //         {
+      //           model: User,
+      //           attributes: ['name']
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // });
+      return successResponse(200, availabilities);
     } catch (error) {
       console.error(error);
-      throw new Error('');
+      throw new AppError("Erro ao listar horarios disponiveis do profissional", 500)
     }
   }
 

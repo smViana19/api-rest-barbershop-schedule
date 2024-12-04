@@ -41,9 +41,11 @@ export default class AvailabilityController {
 
   public async getAvailabilityByProfessionalId(req: Request, res: Response, next: NextFunction) {
     try {
-
+      const { professionalId } = req.params;
+      const response = await this.availabilityService.getAvailabilityByProfesionalId(professionalId);
+      res.status(response.status).json(response.message);
     } catch (error) {
-
+      next(error)
     }
   }
 
