@@ -76,7 +76,7 @@ export default class AvailabilityService {
       return successResponse(200, availabilities);
     } catch (error) {
       console.error(error);
-      throw new AppError("Erro ao listar horarios disponiveis do profissional", 500)
+      throw new AppError(500, "Erro ao listar horarios disponiveis do profissional")
     }
   }
 
