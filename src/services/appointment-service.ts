@@ -92,10 +92,12 @@ export default class AppointmentService {
     }
   }
 
-  public async updateAppointment(appointmentId: string) {
+  public async updateAppointment(appointmentId: string, appointmentData: IAppointment) {
     try {
       const appointment = await this.appointment.findByPk(appointmentId)
-      if (!appointment) return errorResponse(404, "Horário não encontrado");
+      if (!appointment) return errorResponse(404, "Agendamento não encontrado");
+      const updatedAppointment = await appointment.update({ ...appointmentData });
+      return successResponse(200, updatedAppointment);
     } catch (error) {
       throw new AppError(500, "Erro ao editar o agendamento");
     }
@@ -103,7 +105,10 @@ export default class AppointmentService {
 
   public async deleteAppointment(appointmentId: string) {
     try {
-      
+      const appointment = await this.appointment.findByPk(appointmentId)
+      if (!appointment) return errorResponse(404, "Agendamento não encontrado");
+      await appointment.destroy();
+      return successResponse(203)
     } catch (error) {
       throw new AppError(500, "Erro ao excluir agendamento");
     }

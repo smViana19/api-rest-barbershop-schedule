@@ -7,8 +7,8 @@ export default class AppointmentController {
   public async createAppointment(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId, professionalId, serviceId, availabilityId, status } = req.body;
-      const response = await this.appointmentService.createAppointment({ userId, professionalId, serviceId, availabilityId, status });
-      res.status(response.status).json({ ...response });
+      const appointment = await this.appointmentService.createAppointment({ userId, professionalId, serviceId, availabilityId, status });
+      res.status(appointment.status).json({ ...appointment });
     } catch (error) {
       next(error)
     }
@@ -26,8 +26,8 @@ export default class AppointmentController {
   public async getAppointmentById(req: Request, res: Response, next: NextFunction) {
     try {
       const { appointmentId } = req.params;
-      const response = await this.appointmentService.getAppointmentById(appointmentId);
-      res.status(response.status).json(response.message);
+      const appointment = await this.appointmentService.getAppointmentById(appointmentId);
+      res.status(appointment.status).json(appointment.message);
     } catch (error) {
       next(error)
     }
@@ -36,8 +36,8 @@ export default class AppointmentController {
   public async getAppointmentsByUserId(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      const response = await this.appointmentService.getAppointmentsByUserId(userId);
-      res.status(response.status).json(response.message)
+      const appointment = await this.appointmentService.getAppointmentsByUserId(userId);
+      res.status(appointment.status).json(appointment.message)
     } catch (error) {
       next(error)
     }
@@ -45,7 +45,9 @@ export default class AppointmentController {
 
   public async updateAppointment(req: Request, res: Response, next: NextFunction) {
     try {
-      
+      const { appointmentId } = req.params;
+      const appointment = await this.appointmentService.updateAppointment(appointmentId, { ...req.body });
+      res.status(appointment.status).json(appointment.message);
     } catch (error) {
       next(error)
     }
@@ -53,7 +55,9 @@ export default class AppointmentController {
 
   public async deleteAppointment(req: Request, res: Response, next: NextFunction) {
     try {
-
+      const { appointmentId } = req.params;
+      const appointment = await this.appointmentService.deleteAppointment(appointmentId);
+      res.status(appointment.status).json(appointment.message);
     } catch (error) {
       next(error)
     }

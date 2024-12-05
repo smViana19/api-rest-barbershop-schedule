@@ -10,13 +10,13 @@ export default class AvailabilityController {
     try {
       const { professionalId, date, time, isAvailable } = req.body;
       validateTime(time)
-      const response = await this.availabilityService.createAvailability({
+      const availability = await this.availabilityService.createAvailability({
         professionalId,
         date,
         time,
         isAvailable
       });
-      res.status(response.status).json({ ...response });
+      res.status(availability.status).json({ ...availability });
     } catch (error) {
       next(error);
     }
@@ -32,8 +32,8 @@ export default class AvailabilityController {
   public async getAvailabilityById(req: Request, res: Response, next: NextFunction) {
     try {
       const { availabilityId } = req.params;
-      const response = await this.availabilityService.getAvailabilityById(availabilityId);
-      res.status(response.status).json(response.message);
+      const availability = await this.availabilityService.getAvailabilityById(availabilityId);
+      res.status(availability.status).json(availability.message);
     } catch (error) {
       next(error);
     }
@@ -42,8 +42,8 @@ export default class AvailabilityController {
   public async getAvailabilityByProfessionalId(req: Request, res: Response, next: NextFunction) {
     try {
       const { professionalId } = req.params;
-      const response = await this.availabilityService.getAvailabilityByProfesionalId(professionalId);
-      res.status(response.status).json(response.message);
+      const availability = await this.availabilityService.getAvailabilityByProfesionalId(professionalId);
+      res.status(availability.status).json(availability.message);
     } catch (error) {
       next(error)
     }
@@ -52,8 +52,8 @@ export default class AvailabilityController {
   public async updateAvailability(req: Request, res: Response, next: NextFunction) {
     try {
       const { availabilityId } = req.params;
-      const response = await this.availabilityService.updateAvailability(availabilityId, { ...req.body });
-      res.status(response.status).json(response.message);
+      const availability = await this.availabilityService.updateAvailability(availabilityId, { ...req.body });
+      res.status(availability.status).json(availability.message);
     } catch (error) {
       next(error);
     }
@@ -61,8 +61,8 @@ export default class AvailabilityController {
   public async deleteAvailability(req: Request, res: Response, next: NextFunction) {
     try {
       const { availabilityId } = req.params;
-      const response = await this.availabilityService.deleteAvailability(availabilityId);
-      res.status(response.status);
+      const availability = await this.availabilityService.deleteAvailability(availabilityId);
+      res.status(availability.status).json(availability.message);
     } catch (error) {
       next(error);
     }
