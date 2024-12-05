@@ -18,16 +18,14 @@ import {
 import User from './user';
 import Professional from './professional';
 import Service from './service';
+import Availability from './availability';
 
 @Table({
   tableName: 'appointments',
   timestamps: false,
-  underscored: false,
+  underscored: true,
 })
-export default class Appointment extends Model<
-  InferAttributes<Appointment>,
-  InferCreationAttributes<Appointment>
-> {
+export default class Appointment extends Model<InferAttributes<Appointment>, InferCreationAttributes<Appointment>> {
   @PrimaryKey
   @AutoIncrement
   @AllowNull(false)
@@ -40,7 +38,7 @@ export default class Appointment extends Model<
   declare userId: number;
 
   @BelongsTo(() => User)
-  declare user: User;
+  declare user?: User;
 
   @ForeignKey(() => Professional)
   @AllowNull(false)
@@ -48,7 +46,7 @@ export default class Appointment extends Model<
   declare professionalId: number;
 
   @BelongsTo(() => Professional)
-  declare professional: Professional;
+  declare professional?: Professional;
 
   @ForeignKey(() => Service)
   @AllowNull(false)
@@ -56,15 +54,15 @@ export default class Appointment extends Model<
   declare serviceId: number;
 
   @BelongsTo(() => Service)
-  declare service: Service;
+  declare service?: Service;
 
+  @ForeignKey(() => Availability)
   @AllowNull(false)
-  @Column(DataType.DATE)
-  declare date: Date;
+  @Column(DataType.INTEGER)
+  declare availabilityId: number
 
-  @AllowNull(false)
-  @Column(DataType.TIME)
-  declare time: string;
+  @BelongsTo(() => Availability)
+  declare availability?: Availability;
 
   @Default('PENDING')
   @AllowNull(false)

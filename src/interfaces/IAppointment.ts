@@ -1,7 +1,7 @@
 export default interface IAppointment {
-  id: number;
   userId: number;
-  date: Date;
-  time: string;
+  professionalId: number;
+  serviceId: number;
+  availabilityId: number;
   status: string;
 }
