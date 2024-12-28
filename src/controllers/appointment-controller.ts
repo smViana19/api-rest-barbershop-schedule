@@ -6,8 +6,8 @@ export default class AppointmentController {
 
   public async createAppointment(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId, professionalId, serviceId, availabilityId, status } = req.body;
-      const appointment = await this.appointmentService.createAppointment({ userId, professionalId, serviceId, availabilityId, status });
+      const { userId, professionalId, serviceId, availabilityId, status, details } = req.body;
+      const appointment = await this.appointmentService.createAppointment({ userId, professionalId, serviceId, availabilityId, status, details });
       res.status(appointment.status).json({ ...appointment });
     } catch (error) {
       next(error)
