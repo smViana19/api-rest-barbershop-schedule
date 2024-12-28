@@ -59,10 +59,14 @@ export default class Appointment extends Model<InferAttributes<Appointment>, Inf
   @ForeignKey(() => Availability)
   @AllowNull(false)
   @Column(DataType.INTEGER)
-  declare availabilityId: number
+  declare availabilityId: number;
 
   @BelongsTo(() => Availability)
   declare availability?: Availability;
+
+  @AllowNull(true)
+  @Column(DataType.STRING)
+  declare details?: string;
 
   @Default('PENDING')
   @AllowNull(false)
