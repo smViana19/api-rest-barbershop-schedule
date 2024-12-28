@@ -3,6 +3,7 @@ import { generateTokenAndSign } from '../middlewares/loginMiddleware';
 import { errorResponse, successResponse } from '../utils/response-utils';
 import bcrypt from 'bcryptjs';
 import User from '../models/user';
+import AppError from '../utils/error-util';
 export default class AuthService {
   private model: ModelStatic<User> = User;
   public async login(body: { email: string; password: string }) {
@@ -16,11 +17,12 @@ export default class AuthService {
       const validPassword = await bcrypt.compare(body.password, user.password);
       if (!validPassword) return errorResponse(401, 'Senha incorreta');
 
-      const { password, ...userData } = user;
-      const token = generateTokenAndSign(userData);
-      return successResponse(200, { ...userData, token });
+      const { id, name, email, role } = user;
+      const token = generateTokenAndSign({ id, name, email, role });
+      return successResponse(200, { id, name, email, role, token });
     } catch (error) {
-      throw new Error('Erro ao fazer login');
+      console.log(error)
+      throw new AppError(500, 'Erro ao fazer login');
     }
   }
 }
