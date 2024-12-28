@@ -49,7 +49,8 @@ export default class AvailabilityService {
           professionalId,
           isAvailable: true,
         },
-        attributes: ['date', 'time']
+        attributes: ['date', 'time'],
+        order: [['date', 'ASC'], ['time', 'ASC']]
       })
       if (availabilities.length === 0) {
         return errorResponse(404, "Não há horários disponiveis");
