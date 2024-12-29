@@ -18,7 +18,7 @@ export default class UserService {
       return successResponse(201, createdUser);
     } catch (error) {
       console.error(error);
-      throw error;
+      throw new Error('Erro criar usuario');
     }
   }
 
