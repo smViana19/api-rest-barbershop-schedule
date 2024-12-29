@@ -49,7 +49,7 @@ export default class AvailabilityService {
           professionalId,
           isAvailable: true,
         },
-        attributes: ['date', 'time'],
+        attributes: ['id', 'date', 'time'],
         order: [['date', 'ASC'], ['time', 'ASC']]
       })
       if (availabilities.length === 0) {
