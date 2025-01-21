@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import AppointmentService from "../services/appointment-service";
+import AvailabilityService from "../services/availability-service";
 
 export default class AppointmentController {
   private appointmentService = new AppointmentService();

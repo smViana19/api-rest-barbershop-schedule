@@ -5,6 +5,7 @@ const availabilityController = new AvailabilityController();
 const availabilityRouter = Router();
 
 availabilityRouter.get('/availabilities', availabilityController.getAllAvailability.bind(availabilityController));
+availabilityRouter.post('/availabilities/week', availabilityController.createAvailabilityForWeek.bind(availabilityController));
 availabilityRouter.post('/availabilities', availabilityController.createAvailability.bind(availabilityController));
 availabilityRouter.get('/availabilities/professional/:professionalId', availabilityController.getAvailabilityByProfessionalId.bind(availabilityController));
 availabilityRouter.get('/availabilities/:availabilityId', availabilityController.getAvailabilityById.bind(availabilityController));
