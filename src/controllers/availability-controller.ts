@@ -6,6 +6,16 @@ import { validateTime } from "../utils/validators/validate-time";
 export default class AvailabilityController {
   private availabilityService = new AvailabilityService();
 
+  public async createAvailabilityForWeek(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { professionalId, startDate, endDate, startTime, endTime } = req.body;
+      const availability = await this.availabilityService.createAvailabilityForWeek(professionalId, startDate, endDate, startTime, endTime)
+      res.status(availability.status).json({...availability})
+    } catch (error) {
+      next(error)
+    }
+  }
+
   public async createAvailability(req: Request, res: Response, next: NextFunction) {
     try {
       const { professionalId, date, time, isAvailable } = req.body;
