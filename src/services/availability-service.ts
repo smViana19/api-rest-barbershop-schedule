@@ -6,24 +6,52 @@ import Professional from "../models/professional";
 import User from "../models/user";
 import AppError from "../utils/error-util";
 import { addDays, endOfMonth, isBefore, startOfMonth } from "date-fns";
+import { formatTime } from "../utils/format-time-utils";
 export default class AvailabilityService {
 
   private availability: ModelStatic<Availability> = Availability;
   private professional: ModelStatic<Professional> = Professional;
 
+  /**
+   * Cria a disponibilidade de um profissional para toda uma semana, gerando slots de tempo 
+   * entre as datas de início e fim, com base no horário de início e fim especificados.
+   * 
+   * @param {number} professionalId - O ID do profissional para o qual a disponibilidade está sendo gerada.
+   * @param {Date} startDate - A data inicial para o período da disponibilidade.
+   * @param {Date} endDate - A data final para o período da disponibilidade.
+   * @param {string} startTime - O horário de início da disponibilidade no formato "HH:mm".
+   * @param {string} endTime - O horário de término da disponibilidade no formato "HH:mm".
+   * @returns {Promise<object>} Retorna um objeto de sucesso ou erro após a criação da disponibilidade. 
+   *                            Caso a criação seja bem-sucedida, retorna uma mensagem de sucesso e os slots gerados.
+   * 
+   * @throws {Error} Lança um erro se ocorrer um problema ao gerar a disponibilidade.
+   * 
+   * @example
+   * createAvailabilityForWeek(1, new Date('2025-01-01'), new Date('2025-01-07'), "08:00", "17:00")
+   * // Retorna: successResponse(200, "Disponibilidade gerada com sucesso.", ["08:00", "09:00", ..., "16:00"])
+   */
+
   public async createAvailabilityForWeek(professionalId: number, startDate: Date, endDate: Date, startTime: string, endTime: string) {
     try {
+      console.log("chegou aq 1");
+
       const today = new Date()
       if (isBefore(startDate, today)) {
-        return errorResponse(400, "A data é inválida")
+        return errorResponse(400, "A data inicial não pode ser anterior a hoje.")
       }
       const weekDays = [0, 1, 2, 3, 4, 5, 6]
       let currentDate = new Date(startDate)
+      let slot: string[] = []
       while (isBefore(currentDate, endDate)) {
-        const dayOfWeek = currentDate.getDate()
+        console.log("chegou aq while");
+        const dayOfWeek = currentDate.getDay()
         if (weekDays.includes(dayOfWeek)) {
-          const slots = this.createTimeSlots(currentDate, startTime, endTime)
+          const slots = this.generateTimeSlots(startTime, endTime, 60)
+          slot = slots
+          console.log("slots:", slots)
+
           for (const slot of slots) {
+            console.log("slots:", slot)
             await this.availability.create({
               professionalId,
               date: currentDate,
@@ -31,10 +59,10 @@ export default class AvailabilityService {
               isAvailable: true
             })
           }
-          currentDate = addDays(currentDate, 1)
         }
+        currentDate = addDays(currentDate, 1)
       }
-      return successResponse(200, "Disponibilidade gerada com sucesso.")
+      return successResponse(200, "Disponibilidade gerada com sucesso.", slot)
     } catch (error) {
       throw new Error("Erro ao criar disponibilidade")
     }
@@ -126,20 +154,52 @@ export default class AvailabilityService {
     }
   }
 
-  private createTimeSlots(date: Date, startTime: string, endTime: string) {
+  /**
+   * Gera uma lista de intervalos de tempo (slots) entre um horário de início e um horário de fim, 
+   * com base no intervalo de tempo especificado em minutos.
+   * 
+   * @param {string} startTime - O horário inicial no formato "HH:mm".
+   * @param {string} endTime - O horário final no formato "HH:mm".
+   * @param {number} [intervalInMinutes=60] - O intervalo de tempo em minutos entre cada slot. O padrão é 60 minutos.
+   * @returns {string[]} Uma lista de horários (slots) no formato "HH:mm", com o intervalo definido.
+   * 
+   * @example
+   * generateTimeSlots("08:00", "12:00", 60);
+   * // Retorna: ["08:00", "09:00", "10:00", "11:00"]
+   */
+
+
+  private generateTimeSlots(startTime: string, endTime: string, intervalInMinutes = 60) {
     const slots = [];
     let currentTime = startTime;
     while (currentTime < endTime) {
       slots.push(currentTime);
-      currentTime = this.addServiceTime(currentTime, 60); //TODO: TROCAR PARA O TIME DO SERVICO DIRETEMNTE
+      currentTime = this.incrementTimeByMinutes(currentTime, intervalInMinutes);
     }
     return slots
   }
 
-  //TODO: ADAPTAR A FUNCAO PARA RECEBER O SERVICE TIME
-  private addServiceTime(time: string, minutesToAdd: number): string {
-    const [hours, minutes] = time.split(":").map(Number);
-    const date = new Date(0, 0, 0, hours, minutes + minutesToAdd);
-    return date.toISOString().substr(11, 5);
+  /**
+   * Increments a given time by a specified number of minutes.
+   * 
+   * @param {string} time - The initial time in the format "HH:mm".
+   * @param {number} minutesToAdd - The number of minutes to add to the given time.
+   * @returns {string} The new time after adding the specified minutes, formatted as "HH:mm".
+   * 
+   * @example
+   * incrementTimeByMinutes("08:30", 90);
+   * // Returns: "10:00"
+   */
+
+  private incrementTimeByMinutes(time: string, minutesToAdd: number): string {
+
+    const timeParts = time.split(":");
+    const hours = parseInt(timeParts[0], 10);
+    const minutes = parseInt(timeParts[1], 10)
+    const totalMinutes = hours * 60 + minutes + minutesToAdd;
+    const newHours = Math.floor(totalMinutes / 60);
+    const newMinutes = totalMinutes % 60;
+
+    return formatTime(newHours, newMinutes);
   }
 }
