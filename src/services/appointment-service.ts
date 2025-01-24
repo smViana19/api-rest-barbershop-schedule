@@ -10,10 +10,19 @@ import Professional from "../models/professional";
 
 export default class AppointmentService {
   private appointment: ModelStatic<Appointment> = Appointment;
+  private availability: ModelStatic<Availability> = Availability
   private user: ModelStatic<User> = User;
   public async createAppointment(appointment: IAppointment) {
     try {
       const createAppointment = await this.appointment.create({ ...appointment });
+      await this.availability.update(
+        { isAvailable: false },
+        {
+          where: {
+            id: appointment.availabilityId
+          }
+        }
+      )
       return successResponse(201, createAppointment);
     } catch (error) {
       console.error(error)
