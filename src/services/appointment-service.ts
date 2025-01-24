@@ -84,9 +84,6 @@ export default class AppointmentService {
         },
         include: [
           {
-            where: {
-              isAvailable: true,
-            },
             model: Availability,
             attributes: ['date', 'time'],
           }
